@@ -25,7 +25,12 @@ import csv
 import numpy as np
 import copy
 import h5py
-from sets import Set
+#from sets import Set
+try:
+	set
+	Set = set
+except NameError:
+	from sets import Set
 from linecache import getline
 from collections import OrderedDict
 from datetime import datetime
@@ -134,8 +139,7 @@ class SimpleFlatfileParserV9(SMDatabaseReader):
         additional_headers = headers.difference(headerslist)
         if len(additional_headers) > 0:
             for header in additional_headers:
-                print("Header %s not recognised - ignoring this data!" %
-                      header)
+                print("Header %s not recognised - ignoring this data!" % header)
         return
 
     def _parse_record(self, metadata):
@@ -348,6 +352,19 @@ class SimpleFlatfileParserV9(SMDatabaseReader):
         if nodal_planes.nodal_plane_2["strike"]:
             nodal_planes.nodal_plane_2["strike"] = \
                 nodal_planes.nodal_plane_2["strike"] % 360.0
+		# Set dummy values to avoid error in test below
+        if not nodal_planes.nodal_plane_1["strike"]:
+            nodal_planes.nodal_plane_1["strike"] = 999.9		
+        if not nodal_planes.nodal_plane_1["dip"]:
+            nodal_planes.nodal_plane_1["dip"] = 999.9
+        if not nodal_planes.nodal_plane_1["rake"]:
+            nodal_planes.nodal_plane_1["rake"] = 999.9
+        if not nodal_planes.nodal_plane_2["strike"]:
+            nodal_planes.nodal_plane_2["strike"] = 999.9
+        if not nodal_planes.nodal_plane_2["dip"]:
+            nodal_planes.nodal_plane_2["dip"] = 999.9
+        if not nodal_planes.nodal_plane_2["rake"]:
+            nodal_planes.nodal_plane_2["rake"] = 999.9
 
         valid_plane_1 = nodal_planes.nodal_plane_1["strike"] >= 0.0 and\
                         nodal_planes.nodal_plane_1["strike"] < 360.0 and\
